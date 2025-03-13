@@ -1,0 +1,10 @@
+- Crear la page para datos iniciales
+    - referencia el main a la pagina tal cual en la carga de camionetas
+    - formato excel primitivo para chequear la lectura
+
+- Integrar supabase para la imagen
+    -Ver donde incluirla
+
+-git ignore
+
+-filtros, animaciones, excel, borrados de todos 
