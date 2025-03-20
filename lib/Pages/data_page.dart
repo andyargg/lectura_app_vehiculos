@@ -1,4 +1,3 @@
-import 'package:carga_camionetas/Widgets/datatable_widget.dart';
 import 'package:carga_camionetas/Widgets/vehicle_list_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -40,12 +39,26 @@ class _DataPageState extends State<DataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Vehículos por fecha"),
+        title: Text(
+          "Vehículos por fecha",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),
+        ),
+        backgroundColor: Colors.black,
+        elevation: 4,
+        centerTitle: true,
+        
       ),
       body: SafeArea(
-        child: vehicles.isEmpty
+        child: Card(
+          child: vehicles.isEmpty
             ? Center(child: CircularProgressIndicator())
             : VehicleListWidget(vehicles: groupVehiclesByDate(vehicles)),
+        ),
+        
       ),
     );
   }

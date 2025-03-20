@@ -21,7 +21,7 @@ void main() async {
       anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
     );
   } catch (e) {
-    print("Error en la inicialización: $e");
+    return ;
   }
 
   runApp(const MainApp());

@@ -32,9 +32,25 @@ class _DatatableWidgetState extends State<DatatableWidget> {
         child: SingleChildScrollView(
           controller: _horizontalController,
           scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: _createDataColumn(),
-            rows: _createDataRow(),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              dataTableTheme: DataTableThemeData(
+                headingTextStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey,
+                  fontSize: 12,
+                ),
+              dataTextStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+              ),
+              
+            )
+          ),
+            child: DataTable(
+              columns: _createDataColumn(),
+              rows: _createDataRow(),
+            ),
           ),
         ),
       ),
@@ -43,6 +59,9 @@ class _DatatableWidgetState extends State<DatatableWidget> {
   
   List<DataColumn> _createDataColumn(){
     return [
+      DataColumn(
+        label: Text("ID"),
+      ),
       DataColumn(
         label: Text("PATENTE"),
       ),
@@ -91,11 +110,16 @@ class _DatatableWidgetState extends State<DatatableWidget> {
     ];
   }
   List<DataRow> _createDataRow() {
-    return widget.vehicles.map((e){
-        // print(e.date.toString());
+    final indexedVehicles = widget.vehicles.asMap().entries.toList();
+    return indexedVehicles.map((entry){
+      final index = entry.key + 1; 
+      final e = entry.value;
 
         return DataRow(cells: [
 
+          DataCell(
+            Text(index.toString()),
+          ),
           DataCell(
             Text(e.patent.toString()),
           ),

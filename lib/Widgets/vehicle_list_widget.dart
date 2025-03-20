@@ -13,21 +13,39 @@ class VehicleListWidget extends StatelessWidget {
       children: vehicles.entries.map((entry) {
         final String date = entry.key;
         final List<Vehicle> vehicles = entry.value;
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          elevation: 3.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: BorderSide(color: Colors.black, width: 1.0),
+          ),
+          child: ExpansionTile(
+            tilePadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            title: Text(
+              date,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Colors.black
+              ),
+            ),
+            leading: Icon(Icons.calendar_today, color: Colors.blueGrey,),
+            backgroundColor: Colors.white,
+            childrenPadding: EdgeInsets.only(bottom: 12.0),
 
-        return ExpansionTile(
-          title: Text("Fecha: $date"),
-          children: vehicles.map((vehicle) {
-            return ExpansionTile(
-              title: Text("Patente: ${vehicle.patent}"),
-              children: [
-                DatatableWidget(vehicles: [vehicle],)
-              ],
-            );
-          }).toList(),
+            children: [
+              //Casi no visible pero por las dudas
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: DatatableWidget(vehicles: vehicles))
+            ],
+          ),
         );
       }).toList(),
     );
   }
-
-  
 }
