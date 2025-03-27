@@ -1,7 +1,6 @@
 -Mejorar estilos: Para lo ultimo
 -Mejorar ubicacion de la imagen, ver de poder agrandarla al darle click
 -filtros, animaciones, excel, borrados de todos 
--Filtros van a ir dentro del datatable
 4. Pasos generales para tu caso:
     A-Recopilar los datos:
     B-Obtén los strings y las imágenes del DataTable.
