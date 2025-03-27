@@ -2,17 +2,7 @@
 -Mejorar ubicacion de la imagen, ver de poder agrandarla al darle click
 -filtros, animaciones, excel, borrados de todos 
 4. Pasos generales para tu caso:
-    A-Recopilar los datos:
-    B-Obtén los strings y las imágenes del DataTable.
-    C-Crear el archivo Excel:
-    D-Usa un paquete como excel para crear el archivo.
-    E-Crea una hoja de cálculo (worksheet) y define las columnas.
-    F-Insertar los datos:
-        1-Escribe los strings en las celdas correspondientes.
-        2.Para las imágenes, decide si las insertas directamente (si el paquete lo permite) o las referencias como enlaces.
-    G-Configurar filtros:
-        1.Aplica filtros a las columnas usando las funciones del paquete que estés utilizando.
-    H-Guardar el archivo:
-    I-Guarda el archivo Excel en el almacenamiento del dispositivo.
-    J-Permitir la descarga o el compartir:
-    K-Usa paquetes como flutter_downloader o share_plus para permitir que el usuario descargue o comparta el archivo.
+    - Darle a descargar
+    -Se crea el json en archivos temporales
+    -El scripts de python toma ese json y crea un excel
+    -luego desde flutter y el metodo download, tomo ese excel y lo pongo en la carpeta downloads

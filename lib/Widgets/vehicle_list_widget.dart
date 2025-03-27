@@ -1,46 +1,78 @@
 import 'dart:io';
 import 'package:carga_camionetas/Widgets/datatable_widget.dart';
-import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_models/shared_models.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
 class VehicleListWidget extends StatelessWidget {
   final Map<String, List<Vehicle>> vehicles;
 
   const VehicleListWidget({super.key, required this.vehicles});
 
-  Future<void> _downloadEmptyExcel(BuildContext context, String date) async {
-    try {
-      // Reemplazar '/' en la fecha por '-'
-      String safeDate = date.replaceAll("/", "-");
+  Future<void> _downloadExcel(BuildContext context, String date, List<Vehicle> vehicles) async {
+    String safeDate = date.replaceAll("/", "-");
+    
+    Directory directory = Directory('/storage/emulated/0/Download');
+    
+    final Workbook workbook = Workbook();
+    final Worksheet sheet = workbook.worksheets[0];
+    
+    List<String> headers = [
+      "ID", "PATENTE", "TECNICO", "EMPRESA", "ORDEN", "LIMPIEZA", 
+      "AGUA", "RUEDA DE AUXILIO", "ACEITE", "CRIQUE", "LLAVE CRUZ",
+      "FECHA", "EXTINTOR", "CANDADO", "COMENTARIO"
+    ];
 
-      // Obtener la carpeta de almacenamiento externo
-      Directory directory = Directory('/storage/emulated/0/Download');
-      directory ??= await getApplicationDocumentsDirectory();
-
-      // Crear el directorio si no existe
-      String filePath = '${directory.path}/$safeDate.xlsx';
-      File file = File(filePath);
-      await file.create(recursive: true); // Asegurar que el directorio existe
-
-      var excel = Excel.createExcel();
-      excel['Hoja1'].cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0))
-          .value = "Archivo vacío";
-
-      await file.writeAsBytes(excel.encode()!);
-
-      print("guardado en ${filePath}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Archivo guardado en: $filePath"))
-      );
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al exportar: $e"))
-      );
+    for (int col = 0; col < headers.length; col++) {
+      sheet.getRangeByIndex(1, col + 1).setText(headers[col]);
+       
     }
+
+    for (int row = 0; row < vehicles.length; row++) {
+      Vehicle v = vehicles[row];
+      List<dynamic> rowData = [
+        row + 1, 
+        v.patent, 
+        v.technician, 
+        v.company, 
+        v.order, 
+        v.cleanliness, 
+        v.water, 
+        v.spareTire, 
+        v.oil, 
+        v.jack, 
+        v.crossWrench,
+        DateFormat('dd/MM/yyyy').format(v.date.toDate()), 
+        v.fireExtinguisher, 
+        v.lock, 
+        v.comment
+      ];
+      
+      for (int col = 0; col < rowData.length; col++) {
+        sheet.getRangeByIndex(row + 2, col + 1).setText(rowData[col].toString());
+      }
+    }
+    for (int col = 0; col < headers.length; col++) {
+      sheet.autoFitColumn(col + 1);
+      int currentWidth = sheet.getColumnWidthInPixels(col + 1); // Returns int
+      sheet.setColumnWidthInPixels(col + 1, currentWidth + 20); // Add 20 pixels (int)
+    }
+    sheet.autoFilters.filterRange = sheet.getRangeByName('B1:D1');
+
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+    
+    final String fileName = '${directory.path}/$safeDate.xlsx';
+    final File file = File(fileName);
+    
+    await file.create(recursive: true);
+    await file.writeAsBytes(bytes, flush: true);
+    
+    OpenFile.open(fileName);
   }
+
 
 
   @override
@@ -60,7 +92,7 @@ class VehicleListWidget extends StatelessWidget {
             tilePadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             trailing: IconButton(
               icon: Icon(Icons.download),
-              onPressed: () => _downloadEmptyExcel(context, date),
+              onPressed: () => _downloadExcel(context, date, vehicles),
             ),
             title: Text(
               date,
