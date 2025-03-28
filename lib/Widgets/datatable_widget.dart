@@ -33,13 +33,17 @@ class _DatatableWidgetState extends State<DatatableWidget> {
         : widget.vehicles.where((e) => e.company.toUpperCase() == _selectedCompany.toUpperCase()).toList();
 
     return SafeArea(
+      
       child: Scrollbar(
+        
         thumbVisibility: true,
         controller: _horizontalController, 
         child: SingleChildScrollView(
+          
           controller: _horizontalController,
           scrollDirection: Axis.horizontal,
           child: Theme(
+            
             data: Theme.of(context).copyWith(
               dataTableTheme: DataTableThemeData(
                 headingTextStyle: TextStyle(
@@ -153,16 +157,55 @@ class _DatatableWidgetState extends State<DatatableWidget> {
         DataCell(Text(e.lock.toString())),
         DataCell(
           e.imageUrl != null
-              ? Image.network(
+              ? GestureDetector(
+                onTap: () => _showImageLightbox(context, e.imageUrl!),
+                child: Image.network(
                   e.imageUrl!,
-                  width: 50, 
+                  width: 50,
                   height: 50,
                   fit: BoxFit.cover,
-                )
+                ),
+              )
               : const Icon(Icons.image_not_supported), 
         ),
         DataCell(Text(e.comment.toString())),
       ]);
     }).toList();
+  }
+
+  void _showImageLightbox(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.all(10),
+        child: GestureDetector(
+          onTap: Navigator.of(context).pop,
+          child: InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 2.0,
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.contain,
+              width: 700,
+              height: 600,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+              errorBuilder: (context, child, stackTrace){
+                return Icon(
+                  Icons.error,
+                  color: Colors.red,
+                  size: 100,
+                );
+              },
+            )
+          ),
+        ),
+      )
+    );
   }
 }

@@ -19,6 +19,8 @@ class VehicleListWidget extends StatelessWidget {
     final Workbook workbook = Workbook();
     final Worksheet sheet = workbook.worksheets[0];
     
+    final Style headerStyle = workbook.styles.add('HeaderStyle');
+    headerStyle.bold = true;
     List<String> headers = [
       "ID", "PATENTE", "TECNICO", "EMPRESA", "ORDEN", "LIMPIEZA", 
       "AGUA", "RUEDA DE AUXILIO", "ACEITE", "CRIQUE", "LLAVE CRUZ",
@@ -27,6 +29,7 @@ class VehicleListWidget extends StatelessWidget {
 
     for (int col = 0; col < headers.length; col++) {
       sheet.getRangeByIndex(1, col + 1).setText(headers[col]);
+      sheet.getRangeByIndex(1, col + 1).cellStyle = headerStyle;
        
     }
 
@@ -83,12 +86,13 @@ class VehicleListWidget extends StatelessWidget {
         final List<Vehicle> vehicles = entry.value;
         return Card(
           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          elevation: 3.0,
+          elevation: 1.0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
             side: BorderSide(color: Colors.black, width: 1.0),
           ),
           child: ExpansionTile(
+            
             tilePadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             trailing: IconButton(
               icon: Icon(Icons.download),

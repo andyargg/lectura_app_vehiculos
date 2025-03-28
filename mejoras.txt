@@ -1,5 +1,4 @@
 -Mejorar estilos: Para lo ultimo
--Mejorar ubicacion de la imagen, ver de poder agrandarla al darle click
 -filtros, animaciones, excel, borrados de todos 
 4. Pasos generales para tu caso:
     - Darle a descargar
