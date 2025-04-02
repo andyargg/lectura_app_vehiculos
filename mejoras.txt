@@ -1,7 +1,0 @@
--Mejorar estilos: Para lo ultimo
--filtros, animaciones, excel, borrados de todos 
-4. Pasos generales para tu caso:
-    - Darle a descargar
-    -Se crea el json en archivos temporales
-    -El scripts de python toma ese json y crea un excel
-    -luego desde flutter y el metodo download, tomo ese excel y lo pongo en la carpeta downloads

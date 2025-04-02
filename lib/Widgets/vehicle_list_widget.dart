@@ -82,40 +82,45 @@ class VehicleListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: vehicles.entries.map((entry) {
+        
         final String date = entry.key;
         final List<Vehicle> vehicles = entry.value;
         return Card(
-          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          elevation: 1.0,
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          color: const Color(0xFFF3F4F6),
+
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(color: Colors.black, width: 1.0),
+            side: const BorderSide(color: Color(0xFFE2E8F0), width: 1.0),
           ),
+
           child: ExpansionTile(
-            
-            tilePadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            tilePadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             trailing: IconButton(
-              icon: Icon(Icons.download),
+              icon: const Icon(Icons.download_rounded, color: Color(0xFFF97316)),
               onPressed: () => _downloadExcel(context, date, vehicles),
             ),
+            
             title: Text(
               date,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16.0,
-                color: Colors.black
+                color: Color(0xFF2C5282)
               ),
             ),
-            leading: Icon(Icons.calendar_today, color: Colors.blueGrey),
-            backgroundColor: Colors.white,
-            childrenPadding: EdgeInsets.only(bottom: 12.0),
+            
+            leading: const Icon(Icons.calendar_today, color: Color(0xFFF97316)),
+            backgroundColor: const Color.fromRGBO(226, 232, 240, 0.3),
+            childrenPadding: const EdgeInsets.only(bottom: 12.0),
             children: [
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4.0),
                 ),
-                child: DatatableWidget(vehicles: vehicles))
+                child: DatatableWidget(vehicles: vehicles)
+              )
             ],
           ),
         );

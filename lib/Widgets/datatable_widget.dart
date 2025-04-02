@@ -33,36 +33,42 @@ class _DatatableWidgetState extends State<DatatableWidget> {
         : widget.vehicles.where((e) => e.company.toUpperCase() == _selectedCompany.toUpperCase()).toList();
 
     return SafeArea(
-      
       child: Scrollbar(
-        
         thumbVisibility: true,
-        controller: _horizontalController, 
+        controller: _horizontalController,
+        
         child: SingleChildScrollView(
-          
           controller: _horizontalController,
           scrollDirection: Axis.horizontal,
-          child: Theme(
+
+          child: DataTable(
+            sortColumnIndex: _sortColumnIndex,
+            sortAscending: _isAscending,
+            headingTextStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E3A8A),
+              fontSize: 15,
+            ),
+
+            dataTextStyle: const TextStyle(
+              color: Colors.black87,
+              fontSize: 12,
+            ),
             
-            data: Theme.of(context).copyWith(
-              dataTableTheme: DataTableThemeData(
-                headingTextStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
-                  fontSize: 12,
-                ),
-                dataTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                ),
-              ),
+            dataRowColor: WidgetStateProperty.resolveWith<Color?>(
+              (Set<WidgetState> states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Color(0xFFF97316);
+                }
+                return Colors.white; 
+              },
             ),
-            child: DataTable(
-              sortColumnIndex: _sortColumnIndex,
-              sortAscending: _isAscending,
-              columns: _createDataColumn(),
-              rows: _createDataRow(filteredVehicles),
+            border: TableBorder.all(
+              color: const Color(0xFF1E3A8A),
+              width: 0.5,
             ),
+            columns: _createDataColumn(),
+            rows: _createDataRow(filteredVehicles),
           ),
         ),
       ),
@@ -101,7 +107,14 @@ class _DatatableWidgetState extends State<DatatableWidget> {
           items: ["Ninguno", "Tecnoquil", "Comunikil", "Tecnomdv"].map((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value.toUpperCase()),
+              child: Text(
+                value.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: const Color(0xFF1E3A8A),
+                ),
+              ),
             );
           }).toList(),
           onChanged: (String? newValue) {
@@ -109,11 +122,6 @@ class _DatatableWidgetState extends State<DatatableWidget> {
               _selectedCompany = newValue!;
             });
           },
-          style: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
           underline: SizedBox.shrink(),
         ),
       ),
@@ -133,46 +141,49 @@ class _DatatableWidgetState extends State<DatatableWidget> {
   }
 
   List<DataRow> _createDataRow(List<Vehicle> filteredVehicles) {
-    final indexedVehicles = filteredVehicles.asMap().entries.toList();
-    return indexedVehicles.map((entry){
-      final index = entry.key + 1; 
+    const textStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 12);
+    
+    DataCell textCell(String text) => DataCell(Text(text, style: textStyle));
+    
+    return filteredVehicles.asMap().entries.map((entry) {
+      final index = entry.key + 1;
       final e = entry.value;
-
+      
       return DataRow(cells: [
-        DataCell(Text(index.toString())),
-        DataCell(Text(e.patent.toString())),
-        DataCell(Text(e.technician.toString())),
-        DataCell(Text(e.company.toString())),
-        DataCell(Text(e.order.toString())),
-        DataCell(Text(e.cleanliness.toString())),
-        DataCell(Text(e.water.toString())),
-        DataCell(Text(e.spareTire.toString())),
-        DataCell(Text(e.oil.toString())),
-        DataCell(Text(e.jack.toString())),
-        DataCell(Text(e.crossWrench.toString())),
-        DataCell(
-          Text(DateFormat('dd/MM/yyyy').format(e.date.toDate())),
-        ),
-        DataCell(Text(e.fireExtinguisher.toString())),
-        DataCell(Text(e.lock.toString())),
+        textCell(index.toString()),
+        textCell(e.patent.toString()),
+        textCell(e.technician.toString()),
+        textCell(e.company.toString()),
+        textCell(e.order.toString()),
+        textCell(e.cleanliness.toString()),
+        textCell(e.water.toString()),
+        textCell(e.spareTire.toString()),
+        textCell(e.oil.toString()),
+        textCell(e.jack.toString()),
+        textCell(e.crossWrench.toString()),
+        DataCell(Text(
+          DateFormat('dd/MM/yyyy').format(e.date.toDate()),
+          style: textStyle,
+        )),
+        textCell(e.fireExtinguisher.toString()),
+        textCell(e.lock.toString()),
         DataCell(
           e.imageUrl != null
               ? GestureDetector(
-                onTap: () => _showImageLightbox(context, e.imageUrl!),
-                child: Image.network(
-                  e.imageUrl!,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                ),
-              )
-              : const Icon(Icons.image_not_supported), 
+                  onTap: () => _showImageLightbox(context, e.imageUrl!),
+                  child: Image.network(
+                    e.imageUrl!,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Icon(Icons.image_not_supported),
         ),
-        DataCell(Text(e.comment.toString())),
+        textCell(e.comment.toString()),
       ]);
     }).toList();
-  }
-
+}
   void _showImageLightbox(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
