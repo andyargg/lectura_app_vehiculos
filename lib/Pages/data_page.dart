@@ -32,9 +32,7 @@ class _DataPageState extends State<DataPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error al cargar vehículos: $e")),
-        );
+        SnackBarWidget.showError(context, "Error $e");
       }
     }
   }
@@ -97,12 +95,13 @@ class _DataPageState extends State<DataPage> {
             ),
             Expanded(
               child: vehicles.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFFF97316),
-                      )
+                  ? const Text(
+                      "No hay vehiculos para mostrar"
                     )
-                  : VehicleListWidget(vehicles: _mapVehiclesByDate(vehicles)),
+                  : VehicleListWidget(
+                    vehicles: _mapVehiclesByDate(vehicles),
+                    onDeleteVehicle: _handleDeleteVehicle,
+                  ),
             ),
           ],
         ),
@@ -128,4 +127,37 @@ class _DataPageState extends State<DataPage> {
       return ascending ? dateA.compareTo(dateB) : dateB.compareTo(dateA);
     });
   }
+
+  void _handleDeleteVehicle(String dateString) async {
+  try {
+    // Encontrar los vehículos de la fecha seleccionada
+    final dateVehicles = vehicles.where((vehicle) {
+      final vehicleDate = DateFormat('dd/MM/yyyy').format(vehicle.date.toDate());
+      return vehicleDate == dateString;
+    }).toList();
+    
+    if (dateVehicles.isEmpty) return;
+    
+    // Eliminar cada vehículo de la fecha seleccionada
+    for (final vehicle in dateVehicles) {
+      await _repository.delete(vehicle.id!);
+    }
+    
+    // Actualizar el estado local para reflejar la eliminación
+    setState(() {
+      vehicles.removeWhere((vehicle) {
+        final vehicleDate = DateFormat('dd/MM/yyyy').format(vehicle.date.toDate());
+        return vehicleDate == dateString;
+      });
+    });
+    
+    if (mounted) {
+      SnackBarWidget.showSuccess(context, "Vehículos eliminados correctamente");
+    }
+  } catch (e) {
+    if (mounted) {
+      SnackBarWidget.showError(context, "Error al eliminar los vehículos: $e");
+    }
+  }
+}
 }
