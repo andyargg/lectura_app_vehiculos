@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_models/shared_models.dart';
 import 'package:intl/intl.dart';
 
+  import 'dart:io';
+  import 'package:image/image.dart' as img;
+  import 'package:path_provider/path_provider.dart';
+  import 'package:path/path.dart' as path;
+
 class DatatableWidget extends StatefulWidget {
   final List<Vehicle> vehicles;
 
@@ -24,6 +29,23 @@ class _DatatableWidgetState extends State<DatatableWidget> {
     _horizontalController.dispose();
     _verticalController.dispose();
     super.dispose();
+  }
+
+
+  // Convierte cualquier imagen a JPG (recomendado para HEIC)
+  Future<File> convertToJPG(File originalFile) async {
+    final bytes = await originalFile.readAsBytes();
+    final decodedImage = img.decodeImage(bytes);
+
+    if (decodedImage == null) {
+      throw Exception('No se pudo decodificar la imagen');
+    }
+
+    final jpgBytes = img.encodeJpg(decodedImage);
+    final tempDir = await getTemporaryDirectory();
+    final newPath = path.join(tempDir.path, '${DateTime.now().millisecondsSinceEpoch}.jpg');
+    final newFile = File(newPath);
+    return await newFile.writeAsBytes(jpgBytes);
   }
 
   @override

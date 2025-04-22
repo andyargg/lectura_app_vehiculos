@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_models/shared_models.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 class VehicleListWidget extends StatefulWidget {
   final Map<String, List<Vehicle>> vehicles;
@@ -15,11 +17,19 @@ class VehicleListWidget extends StatefulWidget {
 }
 
 class _VehicleListWidgetState extends State<VehicleListWidget> {
+
   Future<void> _downloadExcel(BuildContext context, String date, List<Vehicle> vehicles) async {
     final BuildContext capturedContext = context;
     try {
       String safeDate = date.replaceAll("/", "-");
-      Directory directory = Directory('/storage/emulated/0/Download');
+
+      // ✅ Carpeta Descargas multiplataforma
+      final Directory? downloadsDir = await getDownloadsDirectory();
+      if (downloadsDir == null) {
+        throw Exception("No se pudo obtener la carpeta de Descargas.");
+      }
+
+      final String filePath = '${downloadsDir.path}/$safeDate.xlsx';
 
       final xlsio.Workbook workbook = xlsio.Workbook();
       final xlsio.Worksheet sheet = workbook.worksheets[0];
@@ -62,22 +72,25 @@ class _VehicleListWidgetState extends State<VehicleListWidget> {
       final List<int> bytes = workbook.saveAsStream();
       workbook.dispose();
 
-      final String fileName = '${directory.path}/$safeDate.xlsx';
-      final File file = File(fileName);
-
+      final File file = File(filePath);
       await file.create(recursive: true);
       await file.writeAsBytes(bytes, flush: true);
 
+      // ✅ Mostrar notificación
       if (mounted) {
-        SnackBarWidget.showSuccess(capturedContext, "Descargado correctamente");
+        SnackBarWidget.showSuccess(capturedContext, "Descargado correctamente en Descargas");
       }
+
+      // ✅ Abrir automáticamente
+      await OpenFile.open(file.path);
 
     } catch (e) {
       if (mounted) {
-        SnackBarWidget.showError(capturedContext, "No se realizo la descarga $e");
+        SnackBarWidget.showError(capturedContext, "Error al descargar: $e");
       }
     }
   }
+
 
   void _confirmDelete(BuildContext context, String date) {
     showDialog(

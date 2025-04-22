@@ -4,6 +4,16 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
+/// Default [FirebaseOptions] for use with your Firebase apps.
+///
+/// Example:
+/// ```dart
+/// import 'firebase_options.dart';
+/// // ...
+/// await Firebase.initializeApp(
+///   options: DefaultFirebaseOptions.currentPlatform,
+/// );
+/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -16,17 +26,17 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -48,13 +58,13 @@ class DefaultFirebaseOptions {
     storageBucket: 'informacioncamionetas-44aae.firebasestorage.app',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyClTQ-QCaHXqC-6K-v_S1eFdZLwKQuif-k',
-    appId: '1:1024207682658:ios:980d7170743f027471e53b',
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCWD5sJ0Rjtz-qPgAIbaPjQDrJFHIZfvbY',
+    appId: '1:1024207682658:web:bd9939456d4255c971e53b',
     messagingSenderId: '1024207682658',
     projectId: 'informacioncamionetas-44aae',
+    authDomain: 'informacioncamionetas-44aae.firebaseapp.com',
     databaseURL: 'https://informacioncamionetas-44aae-default-rtdb.firebaseio.com',
     storageBucket: 'informacioncamionetas-44aae.firebasestorage.app',
-    iosBundleId: 'com.example.vistaCamionetas',
   );
 }
