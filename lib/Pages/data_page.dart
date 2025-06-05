@@ -130,7 +130,6 @@ class _DataPageState extends State<DataPage> {
 
   void _handleDeleteVehicle(String dateString) async {
   try {
-    // Encontrar los vehículos de la fecha seleccionada
     final dateVehicles = vehicles.where((vehicle) {
       final vehicleDate = DateFormat('dd/MM/yyyy').format(vehicle.date.toDate());
       return vehicleDate == dateString;
@@ -138,12 +137,10 @@ class _DataPageState extends State<DataPage> {
     
     if (dateVehicles.isEmpty) return;
     
-    // Eliminar cada vehículo de la fecha seleccionada
     for (final vehicle in dateVehicles) {
       await _repository.delete(vehicle.id!);
     }
     
-    // Actualizar el estado local para reflejar la eliminación
     setState(() {
       vehicles.removeWhere((vehicle) {
         final vehicleDate = DateFormat('dd/MM/yyyy').format(vehicle.date.toDate());

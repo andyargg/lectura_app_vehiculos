@@ -23,7 +23,6 @@ class _VehicleListWidgetState extends State<VehicleListWidget> {
     try {
       String safeDate = date.replaceAll("/", "-");
 
-      // ✅ Carpeta Descargas multiplataforma
       final Directory? downloadsDir = await getDownloadsDirectory();
       if (downloadsDir == null) {
         throw Exception("No se pudo obtener la carpeta de Descargas.");
@@ -37,8 +36,10 @@ class _VehicleListWidgetState extends State<VehicleListWidget> {
       final xlsio.Style headerStyle = workbook.styles.add('HeaderStyle');
       headerStyle.bold = true;
 
+      // ACTUALIZADO: Agregamos los nuevos campos
       List<String> headers = [
-        "ID", "PATENTE", "TECNICO", "EMPRESA", "ORDEN", "LIMPIEZA", 
+        "ID", "PATENTE", "TECNICO", "EMPRESA", "MECANICA GENERAL", 
+        "CAMBIO ACEITE", "CAMBIO CORREA", "ORDEN", "LIMPIEZA", 
         "AGUA", "RUEDA DE AUXILIO", "ACEITE", "CRIQUE", "LLAVE CRUZ",
         "FECHA", "EXTINTOR", "CANDADO", "COMENTARIO"
       ];
@@ -50,10 +51,32 @@ class _VehicleListWidgetState extends State<VehicleListWidget> {
 
       for (int row = 0; row < vehicles.length; row++) {
         Vehicle v = vehicles[row];
+        
+        // Helper function para formatear fechas
+        String formatDate(DateTime? date) {
+          return date != null ? DateFormat('dd/MM/yyyy').format(date) : "N/A";
+        }
+        
+        // ACTUALIZADO: Agregamos los nuevos campos
         List<dynamic> rowData = [
-          row + 1, v.patent, v.technician, v.company, v.order, v.cleanliness, 
-          v.water, v.spareTire, v.oil, v.jack, v.crossWrench,
-          DateFormat('dd/MM/yyyy').format(v.date.toDate()), v.fireExtinguisher, v.lock, v.comment
+          row + 1, 
+          v.patent, 
+          v.technician, 
+          v.company, 
+          v.generalMechanics ?? "N/A",           // AGREGADO
+          formatDate(v.oilChange),               // AGREGADO
+          formatDate(v.motorBeltChange),         // AGREGADO
+          v.order, 
+          v.cleanliness, 
+          v.water, 
+          v.spareTire, 
+          v.oil, 
+          v.jack, 
+          v.crossWrench,
+          DateFormat('dd/MM/yyyy').format(v.date.toDate()), 
+          v.fireExtinguisher, 
+          v.lock, 
+          v.comment
         ];
 
         for (int col = 0; col < rowData.length; col++) {
@@ -76,12 +99,10 @@ class _VehicleListWidgetState extends State<VehicleListWidget> {
       await file.create(recursive: true);
       await file.writeAsBytes(bytes, flush: true);
 
-      // ✅ Mostrar notificación
       if (mounted) {
         SnackBarWidget.showSuccess(capturedContext, "Descargado correctamente en Descargas");
       }
 
-      // ✅ Abrir automáticamente
       await OpenFile.open(file.path);
 
     } catch (e) {
@@ -90,7 +111,6 @@ class _VehicleListWidgetState extends State<VehicleListWidget> {
       }
     }
   }
-
 
   void _confirmDelete(BuildContext context, String date) {
     showDialog(

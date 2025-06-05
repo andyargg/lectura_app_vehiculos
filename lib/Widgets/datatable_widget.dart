@@ -147,6 +147,11 @@ class _DatatableWidgetState extends State<DatatableWidget> {
           underline: SizedBox.shrink(),
         ),
       ),
+      DataColumn(label: Text("MECANICA GENERAL")), 
+      DataColumn(label: Text("CAMBIO ACEITE")),     
+      DataColumn(label: Text("CAMBIO CORREA")),
+      DataColumn(label: Text("VTV")),
+      DataColumn(label: Text("CUBIERTAS")),
       DataColumn(label: Text("ORDEN")),
       DataColumn(label: Text("LIMPIEZA")),
       DataColumn(label: Text("AGUA")),
@@ -167,6 +172,14 @@ class _DatatableWidgetState extends State<DatatableWidget> {
     
     DataCell textCell(String text) => DataCell(Text(text, style: textStyle));
     
+    DataCell dateCell(DateTime? date) {
+      if (date == null) return textCell("N/A");
+      return DataCell(Text(
+        DateFormat('dd/MM/yyyy').format(date),
+        style: textStyle,
+      ));
+    }
+    
     return filteredVehicles.asMap().entries.map((entry) {
       final index = entry.key + 1;
       final e = entry.value;
@@ -176,6 +189,11 @@ class _DatatableWidgetState extends State<DatatableWidget> {
         textCell(e.patent.toString()),
         textCell(e.technician.toString()),
         textCell(e.company.toString()),
+        textCell(e.generalMechanics ?? "N/A"),         
+        dateCell(e.oilChange),                          
+        dateCell(e.motorBeltChange),
+        dateCell(e.vtv),
+        dateCell(e.tires),
         textCell(e.order.toString()),
         textCell(e.cleanliness.toString()),
         textCell(e.water.toString()),
@@ -205,7 +223,7 @@ class _DatatableWidgetState extends State<DatatableWidget> {
         textCell(e.comment.toString()),
       ]);
     }).toList();
-}
+  }
   void _showImageLightbox(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
